@@ -229,6 +229,8 @@ enum{   MIDIOpenAppl=1,
 	typedef unsigned char Byte;
 	typedef char * Ptr;
 	typedef unsigned char  Boolean;
+    typedef unsigned long ulong;
+    typedef unsigned char uchar;
 #endif
 
 /*------------------------ System Exclusive extension cell ----------------------*/
@@ -246,14 +248,16 @@ enum{   MIDIOpenAppl=1,
 	typedef struct TMidiST *MidiSTPtr;		
 	typedef struct TMidiST					
 	{
-	#ifdef __SupportOldSTDef__
+#ifdef __SupportOldSTDef__
 		Ptr ptr1;						/* 4 32-bits fields 				*/
 		Ptr ptr2;							
 		Ptr ptr3;
 		Ptr ptr4;	
-	#else
+#elif defined(__x86_64__)
+        Ptr val[4];
+#else
 		long val[4];		
-        #endif
+#endif
 	}	TMidiST;						
 		
 
@@ -304,8 +308,11 @@ enum{   MIDIOpenAppl=1,
 			} seqNum;
 			
 			short shortFields[2];		/* for 14-bits controlers		*/
-            long longField;
-
+#if defined(__x86_64__)
+            long longField[2];
+#else
+            long longField[1];
+#endif
 			long tempo;			/* MidiFile tempo in		*/
                                                         /* microsec/Midi quarter note	*/
 			Byte data[4];			/* for other small events	*/
@@ -342,7 +349,7 @@ enum{   MIDIOpenAppl=1,
 /*------------------------ MidiShare application name ------------------------*/
 
 	#define DrvNameLen 32
-	typedef char* MidiName;
+	typedef const char* MidiName;
 	typedef char  DriverName[DrvNameLen];
 	typedef DriverName SlotName;
 
@@ -411,7 +418,7 @@ enum{   MIDIOpenAppl=1,
 	
 /*----------------------------- Alarms prototypes ----------------------------*/
 
-	typedef void (* TaskPtr)( long date, short refNum, long a1,long a2,long a3 );
+	typedef void (* TaskPtr)( long date, short refNum, void* a1,void* a2,void* a3 );
 	typedef void (* RcvAlarmPtr)( short refNum );
 	typedef void (* ApplAlarmPtr)( short refNum, long code );
 	typedef void (* ApplyProcPtr)( MidiEvPtr e );
@@ -468,7 +475,7 @@ extern "C" {
 
 /*----------------------------------- MidiShare -------------------------------*/
 
-int 		MidiShare();
+Boolean 		MidiShare();
  
 /*--------------------------- Global MidiShare environment --------------------*/
 
@@ -539,12 +546,12 @@ void 		MidiSetPortState (short port, Boolean state);
 
 /*-------------------------- Events and memory managing -----------------------*/
 
-long 		MidiFreeSpace	(void);						
+unsigned long 		MidiFreeSpace	(void);						
 
 MidiEvPtr 	MidiNewCell 	(void);			
 void 	  	MidiFreeCell 	(MidiEvPtr e);					
-long 	  	MidiTotalSpace 	(void);
-long 	  	MidiGrowSpace 	(long n);
+unsigned long 	  	MidiTotalSpace 	(void);
+unsigned long 	  	MidiGrowSpace 	(long n);
 
 MidiEvPtr 	MidiNewEv 	(short typeNum);			
 MidiEvPtr 	MidiCopyEv 	(MidiEvPtr e);			
@@ -566,17 +573,17 @@ void 		MidiApplySeq 	(MidiSeqPtr s, ApplyProcPtr proc);
 
 /*------------------------------------- Time ----------------------------------*/
 
-long 		MidiGetTime		(void);		
+unsigned long 		MidiGetTime		(void);		
 
 /*------------------------------------ Sending --------------------------------*/
 
 void 		MidiSendIm 	(short refNum, MidiEvPtr e);
 void 		MidiSend 	(short refNum, MidiEvPtr e);
-void 		MidiSendAt 	(short refNum, MidiEvPtr e, long d);	
+void 		MidiSendAt 	(short refNum, MidiEvPtr e, unsigned long d);	
 
 /*------------------------------------ Receving -------------------------------*/
 
-long 		MidiCountEvs 	(short refNum);
+unsigned long 		MidiCountEvs 	(short refNum);
 MidiEvPtr 	MidiGetEv 	(short refNum);
 MidiEvPtr 	MidiAvailEv 	(short refNum);
 void 		MidiFlushEvs 	(short refNum);	
@@ -588,9 +595,9 @@ void* 		MidiWriteSync 	(void* adrMem, void* val);
 
 /*---------------------------------- Task Managing ----------------------------*/
 
-void		MidiCall 	(TaskPtr routine, long date, short refNum, long a1,long a2,long a3);
-MidiEvPtr	MidiTask 	(TaskPtr routine, long date, short refNum, long a1,long a2,long a3);
-MidiEvPtr	MidiDTask 	(TaskPtr routine, long date, short refNum, long a1,long a2,long a3);
+void		MidiCall 	(TaskPtr routine, unsigned long date, short refNum, void* a1,void* a2,void* a3);
+MidiEvPtr	MidiTask 	(TaskPtr routine, unsigned long date, short refNum, void* a1,void* a2,void* a3);
+MidiEvPtr	MidiDTask 	(TaskPtr routine, unsigned long date, short refNum, void* a1,void* a2,void* a3);
 void		MidiForgetTask	(MidiEvPtr *e);
 long		MidiCountDTasks (short refnum);
 void		MidiFlushDTasks (short refnum);
@@ -608,6 +615,10 @@ void MidiAcceptType(MidiFilterPtr f, short type, Boolean state);
 Boolean MidiIsAcceptedPort(MidiFilterPtr f, short port);
 Boolean MidiIsAcceptedChan(MidiFilterPtr f, short chan);
 Boolean MidiIsAcceptedType(MidiFilterPtr f, short type);
+
+
+#define MIDISHAREAPI
+#define MSALARMAPI
 
 
 #ifdef __cplusplus

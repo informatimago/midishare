@@ -42,7 +42,6 @@
 #if macintosh
 #	include <stdio.h>
 #	include "MidiShare.h"
-#	define __POWERPC__
 #	define CNAME
 #	define CTASKS
 #	define nil 0
@@ -926,7 +925,7 @@ void Tolerance()
 	MidiFreeEv( (MidiEvPtr)0);
 	print ("%s\n", OK);
 
-#if macintosh && !defined __POWERPC__
+#if macintosh && !defined(__POWERPC__)
 	print ("    OldMidiSetField : ");flush;
 	OldMidiSetField( (MidiEvPtr)0, 0, 0L);
 	print ("%s\n", OK);

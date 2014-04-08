@@ -319,6 +319,9 @@ static unsigned long LongValSwap(long val)
 	#elifdef __i386__
 		#define LongVal(val) LongValSwap(val)
 		#define ShortVal(val) ShortValSwap(val)
+	#elifdef __x86_64__
+		#define LongVal(val) LongValSwap(val)
+		#define ShortVal(val) ShortValSwap(val)
 	#else
 		#error undefined indianness
 	#endif

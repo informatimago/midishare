@@ -1,7 +1,7 @@
 
 TARGET = ../macosx-mono/msCommon.o
-OPTIONS = -D__Macintosh__ -D__POWERPC__ -D__MacOSX__
-INC = -I Headers -I atomic
+OPTIONS = -D__Macintosh__ -D__MacOSX__ -D__Types__
+INC = -IHeaders -Iatomic -I../macosx-mono/include
 CFLAGS :=  -O3 -Wall $(OPTIONS) $(INC)
 CC = cc
 

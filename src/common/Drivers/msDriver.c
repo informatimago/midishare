@@ -97,7 +97,7 @@ MSFunctionType(Boolean) MSGetDriverInfos (short ref, TDriverInfos * infos, TClie
 	appl = g->appls[ref];
 	setName (infos->name, appl->name);
 	infos->version = appl->driver->version;
-	infos->drvslots   = appl->driver->slotsCount;
+	infos->slots   = appl->driver->slotsCount;
 	infos->reserved[0] = infos->reserved[1] = 0;
 	return true;
 }

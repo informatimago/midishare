@@ -18,7 +18,7 @@
 #ifndef __msTypes__
 #define __msTypes__
 
-#if defined(__Macintosh__) && !defined(__POWERPC__) && !defined(__i386__) && !__x86_64__
+#if defined(__Macintosh__) && !defined(__POWERPC__) && !defined(__i386__) && !defined(__x86_64__)
 # define __Pascal_fun__
 #endif
 
@@ -41,12 +41,14 @@
 # define MSFunctionType(type)   type
 #endif
 
+#ifndef false
 enum { false, true };
+#endif
 
 //typedef unsigned char Boolean;
 //typedef unsigned char Byte;
 //typedef char * Ptr;
 //typedef unsigned long ulong;
 //typedef unsigned char uchar;
-
+ 
 #endif

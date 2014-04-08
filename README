@@ -1,0 +1,48 @@
+.. comment: -*- mode:rst; coding:utf-8 -*-
+
+
+Obtain the sources and dependencies
+========================================
+
+Obtain MidiShare
+----------------------------------------
+
+::
+
+
+   cd "${SRC}" ; git clone git@gitorious.org:patchwork/midishare.git
+
+
+Obtain PortAudio
+----------------------------------------
+
+::
+
+   cd "${SRC}" ; mkdir portaudio ; cd portaudio ; svn co https://subversion.assembla.com/svn/portaudio/portaudio/trunk/   
+
+
+Compilation of PortAudio
+----------------------------------------
+
+::
+
+   cd "${SRC}/portaudio/trunk"
+   ./configure
+   make
+   sudo make install
+
+This installs the portaudio library in ``/usr/local``.
+
+
+Compilation on MacOSX/Intel
+----------------------------------------
+
+
+::
+
+   cd "${SRC}/midishare/src/macosx-mono"
+   ./configure
+   make
+   make instasll
+
+This installs the midishare library in ``/usr/local``.

@@ -277,7 +277,7 @@ static Boolean SndChanInit (QuickTimeEnvPtr qt, short chan, short sound)
 	nr.info.typicalPolyphony = 0x00010000;
 #endif
 
-#if defined(__i686__)
+#if defined(__i686__) || defined(__x86_64__)
 	nr.info.polyphony.bigEndianValue = 8;
 	nr.info.typicalPolyphony.bigEndianValue = 0x00010000;
 #endif

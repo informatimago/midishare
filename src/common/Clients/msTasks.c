@@ -38,7 +38,7 @@ MSFunctionType(void) MSCall (TaskPtr task, unsigned long date, short r,
 		Date(ev)= date;
 		RefNum(ev)= (uchar)r;
 		ext= LinkST(ev);
-		ext->val[0]= task;
+		ext->val[0]= (void*)task;
 		ext->val[1]= a1;
 		ext->val[2]= a2;
 		ext->val[3]= a3;
@@ -59,7 +59,7 @@ MSFunctionType(MidiEvPtr) MSTask (TaskPtr task, unsigned long date, short r,
 		Date(ev)= date;
 		RefNum(ev)= (uchar)r;
 		ext= LinkST(ev);
-		ext->val[0]= task;
+		ext->val[0]= (void*)task;
 		ext->val[1]= a1;
 		ext->val[2]= a2;
 		ext->val[3]= a3;
@@ -81,7 +81,7 @@ MSFunctionType(MidiEvPtr) MSDTask (TaskPtr task, unsigned long date, short r,
 		Date(ev)= date;
 		RefNum(ev)= (uchar)r;
 		ext= LinkST(ev);
-		ext->val[0]= task;
+		ext->val[0]= (void*)task;
 		ext->val[1]= a1;
 		ext->val[2]= a2;
 		ext->val[3]= a3;

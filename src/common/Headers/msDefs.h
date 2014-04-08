@@ -19,7 +19,6 @@
 
 #include "MidiShare.h"
 
-typedef const char* MidiName;
 
 /******************************************************************************
 *                               FILTER MACROS

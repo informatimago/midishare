@@ -24,7 +24,9 @@
 #define kCountFieldsError	0
 #define kGetFieldError		0
 
+#ifndef typeLastReserved
 #define typeLastReserved    typeDead-1    /* last reserved event type      */
+#endif
 #define kLenEvent           16            /* len of a MidiShare event      */
 #define kLenDatas           kLenEvent-4   /* len of a sysex extension data */
 
@@ -404,7 +406,7 @@ static MidiEvPtr NewSexEv( lifo* fl, short typeNum)
 			MSFreeCell (ev, fl);
 			return 0;
 		}
-		ext->val[0]= ext;				/* creates a clear extension block */
+		ext->val[0]= (void*)ext;				/* creates a clear extension block */
 		ext->val[1]= ext->val[2]= ext->val[3]= 0;
 		
 		Link(ev)= 0;					/* initialize the header           */

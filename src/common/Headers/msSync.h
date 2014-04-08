@@ -19,7 +19,7 @@
 
 
 #ifdef __Macintosh__
-# if defined(__POWERPC__) || defined(__i386__) || __x86_64__
+# if defined(__POWERPC__) || defined(__i386__) || defined(__x86_64__)
 
 # else
 
