@@ -16,6 +16,9 @@ Obtain MidiShare
 Obtain PortAudio
 ----------------------------------------
 
+
+Midishare uses PortAudio `http://www.portaudio.com/`_.
+
 ::
 
    cd "${SRC}" ; mkdir portaudio ; cd portaudio ; svn co https://subversion.assembla.com/svn/portaudio/portaudio/trunk/   
