@@ -28,7 +28,7 @@
 #define __UMidi__
 
 #include "PlayerDefs.h"
-#include "MidiShare.h"
+#include <MidiShare/MidiShare.h>
 #include "TPlayerConstants.h"
 
 ///------------

@@ -25,7 +25,7 @@
 #define __MIDIFILE_H__
 
 #include <stdio.h>
-#include "MidiShare.h"
+#include <MidiShare/MidiShare.h>
 
 #define nil 0
 

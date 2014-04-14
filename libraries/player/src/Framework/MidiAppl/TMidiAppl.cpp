@@ -142,10 +142,10 @@ void TMidiAppl::Close()
 			ext->ptr3 = (Ptr)a2;
 			ext->ptr4 = (Ptr)a3;
 		#else
-			ext->val[0] = routine;
-			ext->val[1] = a1;
-			ext->val[2] = a2;
-			ext->val[3] = a3;
+			ext->val[0] = (Ptr)routine;
+			ext->val[1] = (Ptr)a1;
+			ext->val[2] = (Ptr)a2;
+			ext->val[3] = (Ptr)a3;
 		#endif
 		*adr = ev;
 		MidiSend(fRefnum, ev);
@@ -208,5 +208,5 @@ void  TMidiAppl::NewMidiTask(TaskPtr routine, ULONG date,  long a1,long a2,long 
 	void  TMidiAppl::NewMidiCall(TaskPtr routine, ULONG date, long a1, long a2, long a3)
 #endif
 {
-	MidiCall(routine, date, fRefnum, a1, a2, a3);
+	MidiCall(routine, date, fRefnum, (void*)a1, (void*)a2, (void*)a3);
 }

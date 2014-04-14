@@ -24,7 +24,7 @@
 #define __Filter__
 
 #include "PlayerDefs.h"
-#include "MidiShare.h"
+#include <MidiShare/MidiShare.h>
 
 #ifdef __cplusplus
 extern "C" {

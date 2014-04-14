@@ -28,7 +28,7 @@
 #define __TTimeConverter__
 
 #include "PlayerDefs.h"
-#include "MidiShare.h"
+#include <MidiShare/MidiShare.h>
 #include "TTime.h"
 
 //----------------------

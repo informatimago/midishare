@@ -68,7 +68,7 @@ MidiSeqPtr UMidi::TrsfNoteToKeyOn (MidiSeqPtr dest)
 	while (e) {
 		if (EvType(e) == typeNote) {
 			// A typeKeyOff ev is build and add to seq
-			if (e1 = MidiCopyEv(e)) {
+			if ((e1 = MidiCopyEv(e))) {
 				EvType(e1) = typeKeyOff;	// Type change
 				Vel(e1) = 64;				// velocity
 				Date(e1) = Date(e1) + Dur(e); // Date + Duration

@@ -30,10 +30,12 @@ dylib : common $(OBJ) $(COM)
 common :
 	make -C ../common
 
-install :
+install: build/Default/MidiShare.framework
 	cp $(TARGET).$(VERS).dylib "$(PREFIX)"/lib
 	cp include/MidiShare.h "$(PREFIX)"/include
-	cd "$(PREFIX)"/lib && ln -s $(TARGET).$(VERS).dylib $(TARGET).dylib
+	cd "$(PREFIX)"/lib && ln -sf $(TARGET).$(VERS).dylib $(TARGET).dylib
+	-mkdir -p ~/Library/Frameworks
+	cp -av build/Default/MidiShare.framework ~/Library/Frameworks/MidiShare.framework
 
 uninstall :
 	rm -f "$(PREFIX)"/lib/(TARGET).$(VERS).dylib
@@ -49,3 +51,7 @@ test :
 
 dep :
 	make -i -C ../common dep 
+
+build/Default/MidiShare.framework:
+	xcodebuild -project midishare.xcodeproj  -target midishare -configuration deployment 
+

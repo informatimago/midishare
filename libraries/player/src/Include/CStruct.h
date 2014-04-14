@@ -33,7 +33,7 @@
 #define __CStruct__
 
 #include "PlayerDefs.h"
-#include "MidiShare.h"
+#include <MidiShare/MidiShare.h>
 
 /*--------------------------------------------------------------------------*/
 

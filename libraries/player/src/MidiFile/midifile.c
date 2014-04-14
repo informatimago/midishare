@@ -291,9 +291,10 @@ static WriteFunc WriteExtTbl[]=
 /*--------------------------------------------------------------------------*/
 /* numbers representation dependant	functions								*/
 
+#ifndef __LITTLE_ENDIAN__
 static unsigned long  LongValDirect(unsigned long val)  {return val;}
 static unsigned short ShortValDirect(unsigned short val) {return val;}
-
+#else
 static unsigned short ShortValSwap(unsigned short val)
 {
 	unsigned short converted = 0;
@@ -311,18 +312,25 @@ static unsigned long LongValSwap(long val)
 	converted |= ShortValSwap((unsigned short)((val & 0xffff0000)>>16));
 	return converted;
 }
+#endif
 
 #ifdef __Macintosh__
 	#ifdef __POWERPC__
 		#define LongVal(val) LongValDirect(val)
 		#define ShortVal(val) ShortValDirect(val)
-	#elifdef __i386__
+	#elif defined(__i386__)
 		#define LongVal(val) LongValSwap(val)
 		#define ShortVal(val) ShortValSwap(val)
-	#elifdef __x86_64__
+	#elif defined(__x86_64__)
 		#define LongVal(val) LongValSwap(val)
 		#define ShortVal(val) ShortValSwap(val)
-	#else
+    #elif defned(__LITTLE_ENDIAN__)
+        #define LongVal(val) LongValSwap(val)
+        #define ShortVal(val) ShortValSwap(val)
+    #elif defined(__BIG_ENDIAN__)
+        #define LongVal(val) LongValDirect(val)
+        #define ShortVal(val) ShortValDirect(val)
+    #else
 		#error undefined indianness
 	#endif
 #endif

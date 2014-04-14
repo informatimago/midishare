@@ -440,7 +440,7 @@ void TPlayer::ReceiveAlarm(short ref)
 	
 	if (fPlayer) {  
 	
-		while (e1 = MidiGetEv(ref)) { 
+		while ((e1 = MidiGetEv(ref))) { 
 		
 			switch (EvType (e1)) {
 			
@@ -457,7 +457,7 @@ void TPlayer::ReceiveAlarm(short ref)
 					// Note events are separated in a KeyOn/KeyOff pair, the KeyOff
 					// is sent to the application itself after the note duration.
 					
-					if (e2 = UMidi::NoteToKeyOff(e1)) {
+					if ((e2 = UMidi::NoteToKeyOff(e1))) {
 						SendToSelf(e2);
 						fPlayer->ReceiveEvents(e1);
 					}else

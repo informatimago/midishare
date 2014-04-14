@@ -29,7 +29,7 @@
 
 #include "TPlayerConstants.h"
 #include "PlayerDefs.h"
-#include "MidiShare.h"
+#include <MidiShare/MidiShare.h>
 
 //------------
 // Class TPos

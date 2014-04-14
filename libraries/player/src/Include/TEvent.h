@@ -30,7 +30,7 @@
 #include <stddef.h>
 
 #include "PlayerDefs.h"
-#include "MidiShare.h"
+#include <MidiShare/MidiShare.h>
 #include "TScoreVisitorInterface.h"
 #include "TPlayerConstants.h"
 
