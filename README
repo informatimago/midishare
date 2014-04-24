@@ -4,6 +4,12 @@
 Obtain the sources and dependencies
 ========================================
 
+See: ::
+
+  ../scripts/get-sources
+  ../scripts/compile-midishare
+
+
 Obtain MidiShare
 ----------------------------------------
 
