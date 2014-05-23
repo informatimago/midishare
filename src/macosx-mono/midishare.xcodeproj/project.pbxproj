@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		4BB41D4109ED368600EE9367 /* lflifo.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BB41D4009ED368600EE9367 /* lflifo.c */; };
 		4BB41D4309ED368E00EE9367 /* lffifo.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BB41D4209ED368E00EE9367 /* lffifo.c */; };
-		4BE442D005BE876E00FFBCB9 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4BE442CF05BE876E00FFBCB9 /* Info.plist */; };
 		8D07F2C00486CC7A007CD1D0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		D365892005BD21F500DFCB64 /* msDrvUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = D365891F05BD21F500DFCB64 /* msDrvUtils.c */; };
 		D365892605BD221300DFCB64 /* msPrefs.c in Sources */ = {isa = PBXBuildFile; fileRef = D365892405BD221300DFCB64 /* msPrefs.c */; };
@@ -433,7 +432,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D07F2C00486CC7A007CD1D0 /* InfoPlist.strings in Resources */,
-				4BE442D005BE876E00FFBCB9 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

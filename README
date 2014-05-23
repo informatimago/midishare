@@ -17,6 +17,8 @@ Obtain MidiShare
 
 
    cd "${SRC}" ; git clone git@gitorious.org:patchwork/midishare.git
+   cd midishare
+   git checkout patchwork
 
 
 Obtain PortAudio
@@ -47,11 +49,38 @@ Compilation on MacOSX/Intel
 ----------------------------------------
 
 
-::
+
+The script ``../scripts/compile-midishare``: ::
+
+    #!/bin/bash
+    INSTDIR="/Library/Frameworks"
+    # mkdir -p "${INSTDIR}"
+
+    cd "$(dirname "$0")/.."
+    cd "$(pwd -P)"
+
+    ( 
+        cd midishare/src/macosx-mono
+        rm -rf build/Deployment/MidiShare.framework
+        xcodebuild -project 'midishare.xcodeproj'  -target 'midishare' -configuration 'Deployment' \
+            && ( sudo rm -rf "${INSTDIR}"/MidiShare.framework \
+                 && sudo cp -a build/Deployment/MidiShare.framework "${INSTDIR}"/MidiShare.framework )
+    ) && ( 
+        cd midishare/libraries/player/macosx 
+        rm -rf build/Deployment/Player.framework
+        xcodebuild -project 'Player.xcodeproj' -target 'Player Universal' -configuration 'Deployment' \
+            && ( sudo rm -rf "${INSTDIR}"/Player.framework \
+                 && sudo cp -a build/Deployment/Player.framework "${INSTDIR}"/Player.framework )
+    )
+
+
+
+
+We may also compile and install the unix library: ::
 
    cd "${SRC}/midishare/src/macosx-mono"
    ./configure
    make
-   make instasll
+   make install
 
 This installs the midishare library in ``/usr/local``.
