@@ -408,10 +408,10 @@ static Boolean Create_mdfHeader( MIDIFilePtr fd,  short format, short time)
 	Boolean ret;							/* return code 		*/
 
 	strcpy( h.id, MDF_MThd);				/* copy the header		*/
-	h.len= LongVal(6);						/* datas length			*/
-	h.ntrks= 0;								/* tracks count = 0		*/
-	h.format= ShortVal(format);				/* file format			*/
-	h.time= ShortVal(time);					/* time representation	*/
+	SetLongVal(h.len,6);						/* datas length			*/
+	SetShortVal(h.ntrks,0);								/* tracks count = 0		*/
+	SetShortVal(h.format,format);				/* file format			*/
+	SetShortVal(h.time,time);					/* time representation	*/
 	ret= (fwrite( &h, MDF_Header_SIZE, 1, fd->fd)== 1);
 	return ret;
 }
@@ -447,7 +447,7 @@ static Boolean Create_trkHeader( FILE *fd,  long len)
 	MDF_Trk h;										/* track header		*/
 
 	strcpy( h.id, MDF_MTrk);						/* copy the header	*/
-	h.len= LongVal(len);							/* datas length		*/
+	SetLongVal(h.len,len);							/* datas length		*/
 	ret= (fwrite( &h,  MDF_Trk_SIZE, 1, fd)== 1);
 	return ret;
 }

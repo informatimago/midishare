@@ -47,7 +47,10 @@
  * v127 [Nov 18,08]    SL bug correction in MidiFileWriteEv, private events are just ignored
  *
  */
- 
+
+#include "midifile.h"
+#include <stdio.h>
+#include <assert.h> 
 
 #ifdef __Macintosh__
 # include <errno.h>
@@ -66,12 +69,6 @@
 enum { false, true };
 #endif
 
-#ifdef __linux__
-# include <string.h>
-#endif
-
-#include "midifile.h"
-
 /*--------------------------------------------------------------------------*/
 /* constants																*/
 #define MDF_MThd	"MThd"			/* file header					*/
@@ -84,55 +81,51 @@ enum { false, true };
 									/* to the header header			*/
 
 /*--------------------------------------------------------------------------*/
-/* functions declaration													*/
-static MidiEvPtr mdf_ignoreEv(MIDIFilePtr fd, long len);
-static MidiEvPtr read_undef(MIDIFilePtr fd, short status);
-static MidiEvPtr read_sysex(MIDIFilePtr fd, short status);
-static MidiEvPtr read_stream(MIDIFilePtr fd, short status);
-static MidiEvPtr read_2DataEv(MIDIFilePtr fd, short status);
-static MidiEvPtr read_1DataEv(MIDIFilePtr fd, short status);
-static MidiEvPtr read_0DataEv(MIDIFilePtr fd, short status);
-static MidiEvPtr read_text(MIDIFilePtr fd, long len, short type);
-static MidiEvPtr read_endTrack(MIDIFilePtr fd, long len, short);
-static MidiEvPtr read_tempo(MIDIFilePtr fd, long len, short);
-static MidiEvPtr read_keySign(MIDIFilePtr fd, long len, short);
-static MidiEvPtr read_timeSign(MIDIFilePtr fd, long len, short);
-static MidiEvPtr read_seqNum(MIDIFilePtr fd, long len, short);
-static MidiEvPtr read_chanPref(MIDIFilePtr fd, long len, short);
-static MidiEvPtr read_smpte(MIDIFilePtr fd, long len, short);
-static MidiEvPtr read_portPref(MIDIFilePtr fd, long len, short);
-static Boolean write_note(MIDIFilePtr fd, MidiEvPtr ev, short status);
-static Boolean write_2DataEv(MIDIFilePtr fd, MidiEvPtr ev, short status);
-static Boolean write_1DataEv(MIDIFilePtr fd, MidiEvPtr ev, short status);
-static Boolean write_0DataEv(MIDIFilePtr fd, MidiEvPtr ev, short status);
-static Boolean dont_write(MIDIFilePtr , MidiEvPtr , short);
-static Boolean write_sysex(MIDIFilePtr fd, MidiEvPtr ev, short);
-static Boolean write_stream(MIDIFilePtr fd, MidiEvPtr ev, short);
-static Boolean write_Ctrl14b(MIDIFilePtr fd, MidiEvPtr ev, short);
-static Boolean write_RegP(MIDIFilePtr fd, MidiEvPtr ev, short);
-static Boolean write_NRegP(MIDIFilePtr fd, MidiEvPtr ev, short);
-
-static Boolean write_SeqNum(MIDIFilePtr fd, MidiEvPtr ev, short);
-static Boolean write_texte(MIDIFilePtr fd, MidiEvPtr ev, short status);
-static Boolean write_chanPref(MIDIFilePtr fd, MidiEvPtr ev, short);
-static Boolean write_endTrack(MIDIFilePtr fd, MidiEvPtr, short);
-static Boolean write_tempo(MIDIFilePtr fd, MidiEvPtr ev, short);
-static Boolean write_smpte(MIDIFilePtr fd, MidiEvPtr ev, short);
-static Boolean write_timeSign(MIDIFilePtr fd, MidiEvPtr, short);
-static Boolean write_keySign(MIDIFilePtr fd, MidiEvPtr, short);
-static Boolean write_portPref(MIDIFilePtr fd, MidiEvPtr ev, short);
-
-
-/*--------------------------------------------------------------------------*/
 /* global variables 														*/
 
 int MidiFile_errno;							/* for errors management		*/
 
 
-typedef MidiEvPtr (* NEAR ReadFunc)    (MIDIFilePtr fd, short status);
-typedef MidiEvPtr (* NEAR ReadMetaFunc)(MIDIFilePtr fd, long len, short type);
-typedef Boolean   (* NEAR WriteFunc)   (MIDIFilePtr fd, MidiEvPtr ev, short status);
+typedef MidiEvPtr (* NEAR ReadFunc)    ( MIDIFilePtr fd, short status);
+typedef MidiEvPtr (* NEAR ReadMetaFunc)( MIDIFilePtr fd, long len, short type);
+typedef Boolean   (* NEAR WriteFunc)   ( MIDIFilePtr fd, MidiEvPtr ev, short status);
 
+static MidiEvPtr mdf_ignoreEv( MIDIFilePtr fd, long len);
+static Boolean dont_write(MIDIFilePtr unused1, MidiEvPtr unused2, short unused3);
+static Boolean write_keySign(MIDIFilePtr f, MidiEvPtr ev, short unused1);
+static Boolean write_timeSign(MIDIFilePtr f, MidiEvPtr ev, short unused1);
+static Boolean write_smpte(MIDIFilePtr f, MidiEvPtr ev, short unused1);
+static Boolean write_tempo(MIDIFilePtr f, MidiEvPtr ev, short unused1);
+static Boolean write_endTrack(MIDIFilePtr f, MidiEvPtr  unused1, short unused2);
+static Boolean write_chanPref(MIDIFilePtr f, MidiEvPtr ev, short unused1);
+static Boolean write_portPref(MIDIFilePtr f, MidiEvPtr ev, short unused1);
+static Boolean write_texte(MIDIFilePtr f, MidiEvPtr ev, short status);
+static Boolean write_SeqNum(MIDIFilePtr f, MidiEvPtr ev, short unused1);
+static Boolean write_param( FILE *fd, short num, short val, short type);
+static Boolean write_NRegP(MIDIFilePtr fd, MidiEvPtr ev, short unused1);
+static Boolean write_RegP(MIDIFilePtr fd, MidiEvPtr ev, short unused1);
+static Boolean write_Ctrl14b(MIDIFilePtr f, MidiEvPtr ev, short unused1);
+static Boolean write_sysex(MIDIFilePtr f, MidiEvPtr ev, short unused1);
+static Boolean write_stream(MIDIFilePtr f, MidiEvPtr ev, short unused1);
+static Boolean write_0DataEv(MIDIFilePtr fd, MidiEvPtr unused1, short status);
+static Boolean write_1DataEv(MIDIFilePtr f, MidiEvPtr ev, short status);
+static Boolean write_2DataEv(MIDIFilePtr f, MidiEvPtr ev, short status);
+static Boolean write_note(MIDIFilePtr f, MidiEvPtr ev, short status);
+static MidiEvPtr read_text(MIDIFilePtr fd, long len, short type);
+static MidiEvPtr read_endTrack(MIDIFilePtr fd, long len, short unused1);
+static MidiEvPtr read_tempo(MIDIFilePtr fd, long len, short unused1);
+static MidiEvPtr read_keySign(MIDIFilePtr fd, long len, short unused1);
+static MidiEvPtr read_timeSign(MIDIFilePtr fd, long len, short unused1);
+static MidiEvPtr read_seqNum(MIDIFilePtr fd, long len, short unused1);
+static MidiEvPtr read_chanPref(MIDIFilePtr fd, long len, short unused1);
+static MidiEvPtr read_portPref(MIDIFilePtr fd, long len, short unused1);
+static MidiEvPtr read_smpte(MIDIFilePtr fd, long len, short unused1);
+static MidiEvPtr read_undef(MIDIFilePtr fd,  short len);
+static MidiEvPtr read_sysex(MIDIFilePtr fd, short status);
+static MidiEvPtr read_stream(MIDIFilePtr fd, short status);
+static MidiEvPtr read_2DataEv(MIDIFilePtr fd, short status);
+static MidiEvPtr read_1DataEv(MIDIFilePtr fd, short status);
+static MidiEvPtr read_0DataEv(MIDIFilePtr unused1, short status);
 
 /*------------------- type/status byte correspondence ---------------------*/
 static unsigned char codeTbl[]=
@@ -198,7 +191,7 @@ static ReadFunc ReadEvTbl[]=
 			read_2DataEv,		/* $e0 : 7 typePitchWheel	*/
 
 			read_sysex,			/* $f0 :  17 typeSysEx			*/
-			read_1DataEv,		/* $f1 : 130 typeQuarterFrame	*/	
+			read_1DataEv,		/* $f1 : 130 typeQuarterFrame	*/
 			read_2DataEv,		/* $f2 :   8 typeSongPos		*/
 			read_1DataEv,		/* $f3 :   9 typeSongSel		*/
 			read_undef,			/* $f4							*/
@@ -233,7 +226,7 @@ static ReadMetaFunc ReadExtTbl[]=
 			read_timeSign,		/* 146 typeTimeSign		*/
 			read_keySign,		/* 147 typeKeySign		*/
 			read_text,			/* 148 typeSpecific		*/
-			read_portPref		/* 149 typePortPrefix  	*/	
+			read_portPref		/* 149 typePortPrefix  	*/
 	};
 
 static WriteFunc WriteEvTbl[]=
@@ -262,7 +255,7 @@ static WriteFunc WriteEvTbl[]=
 
 static WriteFunc WriteExtTbl[]=
 	{
-			write_1DataEv,		/* 130 typeQuarterFrame	*/	
+			write_1DataEv,		/* 130 typeQuarterFrame	*/
 			write_Ctrl14b,		/* 131 typeCtrl14b		*/
 			write_NRegP,		/* 132 typeNonRegParam	*/
 			write_RegP,			/* 133 typeRegParam		*/
@@ -284,73 +277,28 @@ static WriteFunc WriteExtTbl[]=
 			write_keySign,		/* 147 typeKeySign		*/
 			write_texte,		/* 148 typeSpecific		*/
 			write_portPref,		/* 149 typePortPrefix	*/
-			
+
 	};
 
-
 /*--------------------------------------------------------------------------*/
-/* numbers representation dependant	functions								*/
+/* numbers representation functions                                         */
 
-#ifndef __LITTLE_ENDIAN__
-static unsigned long  LongValDirect(unsigned long val)  {return val;}
-static unsigned short ShortValDirect(unsigned short val) {return val;}
-#else
-static unsigned short ShortValSwap(unsigned short val)
-{
-	unsigned short converted = 0;
-
-	converted = (val & 0xff) << 8;
-	converted |= (val & 0xff00) >> 8;
-	return converted;
+static void SetLongVal(unsigned char* dst,long val){
+    dst[3]=0xff&val;
+    dst[2]=0xff&(val>>8);
+    dst[1]=0xff&(val>>16);
+    dst[0]=0xff&(val>>24);
 }
-
-static unsigned long LongValSwap(long val)
-{
-	unsigned long converted = 0;
-
-	converted = (unsigned long)ShortValSwap((unsigned short)(val & 0xffff)) << 16;
-	converted |= ShortValSwap((unsigned short)((val & 0xffff0000)>>16));
-	return converted;
+static void SetShortVal(unsigned char* dst,short val){
+    dst[1]=0xff&val;
+    dst[0]=0xff&(val>>8);
 }
-#endif
-
-#ifdef __Macintosh__
-	#ifdef __POWERPC__
-		#define LongVal(val) LongValDirect(val)
-		#define ShortVal(val) ShortValDirect(val)
-	#elif defined(__i386__)
-		#define LongVal(val) LongValSwap(val)
-		#define ShortVal(val) ShortValSwap(val)
-	#elif defined(__x86_64__)
-		#define LongVal(val) LongValSwap(val)
-		#define ShortVal(val) ShortValSwap(val)
-    #elif defned(__LITTLE_ENDIAN__)
-        #define LongVal(val) LongValSwap(val)
-        #define ShortVal(val) ShortValSwap(val)
-    #elif defined(__BIG_ENDIAN__)
-        #define LongVal(val) LongValDirect(val)
-        #define ShortVal(val) ShortValDirect(val)
-    #else
-		#error undefined indianness
-	#endif
-#endif
-
-#ifdef __Windows__
-	#define LongVal(val) LongValSwap(val)
-	#define ShortVal(val) ShortValSwap(val)
-#endif
-
-#ifdef __Linux__
-	#ifdef __ppc__
-		#define LongVal(val) LongValDirect(val)
-		#define ShortVal(val) ShortValDirect(val)
-	#endif
-
-	#ifdef __i386__
-		#define LongVal(val) LongValSwap(val)
-		#define ShortVal(val) ShortValSwap(val)
-	#endif
-#endif
+static long LongVal(unsigned char* src){
+    return (long)((src[0]<<24)|(src[1]<<16)|(src[2]<<8)|src[3]);
+}
+static short ShortVal(unsigned char* src){
+    return (short)((src[0]<<8)|src[1]);
+}
 
 
 /*--------------------------------------------------------------------------*/
@@ -453,12 +401,16 @@ static Boolean Create_mdfHeader(MIDIFilePtr fd,  short format, short time)
 {
 	MDF_Header h;
 	Boolean ret;							/* return code 		*/
+    assert(4==sizeof(h.len));
+    assert(2==sizeof(h.format));
+    assert(2==sizeof(h.ntrks));
+    assert(2==sizeof(h.time));
 
 	strcpy( h.id, MDF_MThd);				/* copy the header		*/
-	h.len= LongVal(6);						/* datas length			*/
-	h.ntrks= 0;								/* tracks count = 0		*/
-	h.format= ShortVal(format);				/* file format			*/
-	h.time= ShortVal(time);					/* time representation	*/
+	SetLongVal(h.len,6);						/* datas length			*/
+	SetShortVal(h.ntrks,0);								/* tracks count = 0		*/
+	SetShortVal(h.format,format);				/* file format			*/
+	SetShortVal(h.time,time);					/* time representation	*/
 	ret= (fwrite( &h, MDF_Header_SIZE, 1, fd->fd)== 1);
 	return ret;
 }
@@ -476,7 +428,6 @@ static Boolean ReadTrkHeader(FILE *fd,  MDF_Trk *h)
 	{
 		if( strncmp( h->id, MDF_MTrk, 4))
 		{
-         h->len= LongVal (h->len);
 			MidiFile_errno= MidiFileErrFrmt;		/* bad file			*/
 			ret= false;
 		}
@@ -492,7 +443,7 @@ static Boolean Create_trkHeader(FILE *fd,  long len)
 	MDF_Trk h;										/* track header		*/
 
 	strcpy( h.id, MDF_MTrk);						/* copy the header	*/
-	h.len= LongVal(len);							/* datas length		*/
+	SetLongVal(h.len,len);							/* datas length		*/
 	ret= (fwrite( &h,  MDF_Trk_SIZE, 1, fd)== 1);
 	return ret;
 }
@@ -512,11 +463,14 @@ Boolean MFAPI MidiFileChooseTrack(MIDIFilePtr fd, short trackIndex)
 		MidiFile_errno= MidiFileErrNoTrack;
 		return false;
 	}
-	if( fseek( fd->fd,  MDF_Header_SIZE, SEEK_SET))	/* pos = piste 0	*/
+	if( fseek( fd->fd,  MDF_Header_SIZE, SEEK_SET)){	/* pos = piste 0	*/
 		return false;
-	while( trackIndex--)
-		if( !ReadTrkHeader( fd->fd, &h) || fseek( fd->fd, LongVal (h.len), SEEK_CUR))
+    }
+	while( trackIndex--){
+		if( !ReadTrkHeader( fd->fd, &h) || fseek( fd->fd, LongVal (h.len), SEEK_CUR)){
 			return false;
+        }
+    }
 	return true;
 }
 
@@ -833,6 +787,7 @@ static Boolean write_note(MIDIFilePtr f, MidiEvPtr ev, short status)
 	}
 	return !ferror( fd);	
 }
+
 
 /*--------------------------------------------------------------------------*/
 static Boolean WriteEv(MIDIFilePtr fd, MidiEvPtr ev)
@@ -1534,7 +1489,7 @@ MIDIFilePtr MFAPI MidiFileCreate( const char *name, short format, short timeDef,
 	MIDIFilePtr fd;			/* my MIDI file descriptor	*/
 	Boolean ok= true;				/* to check for errors		*/
 	short time;						/* time representation 		*/
-	
+
 	MidiFile_errno= MidiFileNoErr;
 	if( (fd= (MIDIFilePtr )malloc( sizeof( midiFILE))) )
 	{

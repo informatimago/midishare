@@ -148,13 +148,13 @@ char trackListe[maxTrack];					/* liste des pistes à écrire 	*/
 	MidiEvPtr ev= nil;
 	 char *tmp;
 	
-	if (tmp= GetBeginKey(buff))			/* recherche le début de la clé */
+	if((tmp= GetBeginKey(buff)))			/* recherche le début de la clé */
 	{
 		if (tmp!= buff && *(tmp-1) == ' ')		/* si un espace le précède	*/
 			tmp--;								/* on pointe un char avant	*/
 		*tmp = 0;								/* fin de chaine			*/
 		tmp= buff;								/* pointe le début			*/
-		if (ev = MidiNewEv(typeSeqName))		/* nouvel événement			*/
+		if((ev = MidiNewEv(typeSeqName)))		/* nouvel événement			*/
 		{
 			while (*tmp)						/* recopie de l'ancien		*/
 				MidiAddField(ev, *tmp++);		/* octet par octet			*/
@@ -192,7 +192,7 @@ char trackListe[maxTrack];					/* liste des pistes à écrire 	*/
 	char strRef[4];
 	
 	refNum = numPiste;
-	if (tmp = GetBeginKey(buff))			/* recherche le début de la clé */
+	if((tmp = GetBeginKey(buff)))			/* recherche le début de la clé */
 	{
 		tmp += keyLen;						/* tmp pte le numéro de port*/		
 		while (isdigit(*tmp) && i<3)
@@ -214,7 +214,7 @@ char trackListe[maxTrack];					/* liste des pistes à écrire 	*/
 	char buff[512];
 
 	refNum = numPiste;
-	if (ev = GetTrackName(seq, &prec))
+	if((ev = GetTrackName(seq, &prec)))
 	{
 		n= MidiCountFields(ev);				/* nbre de champs de l'evt	*/
 		l= strlen(Player);					/* longueur + que minimale	*/
@@ -231,7 +231,7 @@ char trackListe[maxTrack];					/* liste des pistes à écrire 	*/
 					seq->last = nil;
 				MidiFreeEv(ev);						/* et le libère		*/
 			}
-			else if (ori= RestoreSeqName(buff))		/* evt modifié		*/
+			else if((ori= RestoreSeqName(buff)))		/* evt modifié		*/
 			{
 				Date(ori) = Date(ev);
 				Link(ori) = Link(ev);			/* on restaure l'original	*/
@@ -282,7 +282,7 @@ char trackListe[maxTrack];					/* liste des pistes à écrire 	*/
 {
 	 MidiEvPtr next;
 	
-	while (next = Link(e1))				/* tant qu'une séquence n'est finie */
+	while((next = Link(e1)))				/* tant qu'une séquence n'est finie */
 	{
 		if (Date(next) <= Date(e2))		/* date inférieure dans la même seq */
 			e1 = next;					/* rien à faire : on continue		*/
@@ -293,7 +293,7 @@ char trackListe[maxTrack];					/* liste des pistes à écrire 	*/
 			e2 = next;
 		}
 	}
-	if (Link(e1) = e2)			/* linke avec la fin de l'autre séquence 	*/
+	if((Link(e1) = e2))			/* linke avec la fin de l'autre séquence 	*/
 		while (Link(e2))
 			e2 = Link(e2);
 	return e2;					/* et renvoie le dernier evt de la séquence */
@@ -306,7 +306,7 @@ char trackListe[maxTrack];					/* liste des pistes à écrire 	*/
 	
 	if (dest && src)							/* dest et src existent		*/
 	{
-		if (firstSrc = src->first)				/* src non vide				*/
+		if ((firstSrc = src->first))				/* src non vide				*/
 		{
 			if (!(firstDest = dest->first))		/* si destination est vide	*/
 			{
@@ -337,7 +337,7 @@ static Boolean TrsfNoteToKeyOn (MidiSeqPtr dest)
 	while (e) {
 			if (EvType(e) == typeNote) {
 				// A typeKeyOff ev is build and add to seq
-				if (e1 = MidiCopyEv(e)) {
+				if ((e1 = MidiCopyEv(e))) {
 					EvType(e1) = typeKeyOff;		// Type change
 					Vel(e1) = 64;					// velocity
 					Date(e1) = Date(e1) + Dur(e);	// Date + Duration
@@ -475,7 +475,7 @@ int TryToReadTrack(midiFILE *fd, MidiSeqPtr dest, int i)
 	MidiSeqPtr seq;
 	int ret= 0;
 
-	if (seq = MidiFileReadTrack(fd)) {		/* lecture de la piste		*/
+	if ((seq = MidiFileReadTrack(fd))) {		/* lecture de la piste		*/
 		UseTrack(seq, dest, i);
 	} else {
 		if (MidiFile_errno == MidiFileErrEvs) {
@@ -488,11 +488,13 @@ int TryToReadTrack(midiFILE *fd, MidiSeqPtr dest, int i)
 			if (seq) {UseTrack(seq, dest, i);}
 		}	
 			
-	if (!seq)
-		if (MidiFile_errno != MidiFileNoErr)
-			ret = MidiFile_errno;	// Erreur MidiShare
-		else		
-			ret = ErrRead;		// Erreur de lecture
+        if (!seq){
+            if (MidiFile_errno != MidiFileNoErr){
+                ret = MidiFile_errno;	// Erreur MidiShare
+            }else{
+                ret = ErrRead;		// Erreur de lecture
+            }
+        }
 	}
 	return ret;
 }
@@ -534,7 +536,7 @@ int TryToReadTrack(midiFILE *fd, MidiSeqPtr dest, int i)
 	Boolean ret = false;
 	MidiSeqPtr seq;
 	
-	if (ev= MidiNewEv(typeEndTrack))		/* alloue un evt fin de piste	*/
+	if ((ev= MidiNewEv(typeEndTrack)))		/* alloue un evt fin de piste	*/
 	{
 		Link(ev)= nil;
 		if ((seq=fd->keyOff) && seq->first)	/* il reste des keyOff à écrire */
@@ -569,9 +571,9 @@ int TryToReadTrack(midiFILE *fd, MidiSeqPtr dest, int i)
 	char *tmp;
 	char buff[6];
 	
-	if (ref == numPiste)					/* refNum égal au num de piste	*/
+	if (ref == numPiste){					/* refNum égal au num de piste	*/
 		ret = MidiFileWriteEv(fd, ev);		/* on écrit l'événement tel quel*/
-	else if (name = MidiCopyEv(ev))			/* sinon on le copie			*/
+	}else if ((name = MidiCopyEv(ev)))			/* sinon on le copie			*/
 	{
 		/* ajoute espace si l'ev n'est pas vide */
 		if (MidiCountFields(ev)) MidiAddField(name, ' ');			
@@ -585,7 +587,9 @@ int TryToReadTrack(midiFILE *fd, MidiSeqPtr dest, int i)
 		ret = MidiFileWriteEv(fd, name);	/* on écrit l'événement			*/
 		MidiFreeEv(name);					/* et on le libère				*/
 	}
-	else MidiFile_errno = MidiFileErrEvs;
+	else{
+        MidiFile_errno = MidiFileErrEvs;
+    }
 	return ret;
 }
 
@@ -786,24 +790,28 @@ static Boolean AddPortPrefix(MidiSeqPtr seq)
 				ret = false;
 			numPiste++;
 			i++;
-		}
-		else ret= false;
+		}else{
+            ret= false;
+        }
 	}
-	for(i; i< maxTrack && ret; i++)
+	for(; i< maxTrack && ret; i++)
 	{
 		if (trackListe[i])
 		{
 			if (MidiFileNewTrack(fd))
 			{
-				if (fd->format== midifile1)
+				if (fd->format== midifile1){
 					ret = WriteTrackFormat1(fd, seq, i, numPiste);
-				else
+                }else{
 					ret = WriteTrackFormat2(fd, seq, i, numPiste);
+                }
 				numPiste++;
-				if (!MidiFileCloseTrack(fd) || !ret)
+				if (!MidiFileCloseTrack(fd) || !ret){
 					ret= false;
-			}
-			else ret= false;
+                }
+			}else{
+                ret= false; 
+            }
 		}
 	}
 	return ret;
@@ -817,7 +825,7 @@ static Boolean AddPortPrefix(MidiSeqPtr seq)
 	
 	if (infos->timedef )  				  /* temps SMPTE */
 	{
-		if (e = MidiNewEv(typeTempo)) {   /* ajout d'un ev tempo (conversion au format Midi) */
+		if ((e = MidiNewEv(typeTempo))) {   /* ajout d'un ev tempo (conversion au format Midi) */
 			Tempo(e) = 500000000 / (infos->timedef * infos->clicks);
 			Date(e) = 0;
 			MidiAddSeq (s, e);
@@ -858,19 +866,22 @@ int  EXPORT MidiFileSave(char * name, MidiSeqPtr seq, MidiFileInfosPtr infos)
 		return MidiFileErrEvs;
 	}
  
-	if (fd= MidiFileCreate(Cname, infos->format, infos->timedef, infos->clicks))
+	if((fd= MidiFileCreate(Cname, infos->format, infos->timedef, infos->clicks)))
 	{
 		if (infos->format)						/* format 1 ou 2			*/
 		{
 			AnalyseSeq(fd, seq);				/* analyse de la séquence 	*/
 			t= WriteTracks(fd, seq);			/* écrit les pistes			*/
-		}
-		else t= MidiFileWriteTrack(fd, seq);	/* format 0					*/
+		}else{
+            t= MidiFileWriteTrack(fd, seq);	/* format 0					*/
+        }
 		if (!t)									/* il y a eu une erreur		*/
 		{
-			if (MidiFile_errno!= MidiFileNoErr)
+			if (MidiFile_errno!= MidiFileNoErr){
 				ret= MidiFile_errno;
-			else ret= ErrWrite;
+            }else{
+                ret= ErrWrite;
+            }
 		}
 		MidiFileClose(fd);						/* referme le fichier		*/
 	}
@@ -909,13 +920,13 @@ int  EXPORT MidiFileLoad(char * name, MidiSeqPtr seq, MidiFileInfosPtr infos)
 	assert(strlen(name) < 256);
 	Convert2UTF8(name, Cname, 256);
 	
-	if (fd = MidiFileOpen(Cname, MidiFileRead))	/* ouvre le fichier 		*/
+	if ((fd = MidiFileOpen(Cname, MidiFileRead)))	/* ouvre le fichier 		*/
 	{
 				
 		seq->first = seq->last = nil;			/* init de la séquence  	*/
-		if (ret = ReadTracks(fd, seq))			/* lit les pistes			*/
+		if ((ret = ReadTracks(fd, seq))){			/* lit les pistes			*/
 			MidiClearSeq(seq);					/* vide la seq si erreur	*/
-		else									/* sinon					*/
+		}else									/* sinon					*/
 		{
 			DelEndTrack(seq);					/* supprime fins de pistes	*/
 			if (infos)
@@ -927,10 +938,11 @@ int  EXPORT MidiFileLoad(char * name, MidiSeqPtr seq, MidiFileInfosPtr infos)
 			}
 		}
 		MidiFileClose(fd);						/* referme le fichier   	*/
-	}
-	else if (MidiFile_errno != MidiFileNoErr)
+	}else if (MidiFile_errno != MidiFileNoErr){
 		ret = MidiFile_errno;
-	else ret = ErrOpen;
+	}else{
+        ret = ErrOpen; 
+    }
 	return ret;
 }
 

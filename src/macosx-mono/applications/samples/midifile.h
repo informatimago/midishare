@@ -124,18 +124,18 @@ enum { midifile0= 0, midifile1, midifile2};
 /* datas structures															*/
 /*--------------------------------------------------------------------------*/
 
-typedef struct MDF_Header{			/* the file header structure	*/
-	char 	id[4];					/* header id					*/
-	long	len;					/* datas length ( = 6 )			*/
-	short	format;					/* file format					*/
-	unsigned short ntrks;			/* number of tracks				*/
-	short	time;					/* time representation			*/
+typedef struct MDF_Header{          /* the file header structure    */
+    unsigned char id[4];            /* header id                    */
+    unsigned char len[4];           /* datas length ( = 6 )         */
+    unsigned char format[2];        /* file format                  */
+    unsigned char ntrks[2];         /* number of tracks             */
+    unsigned char time[2];          /* time representation          */
 }MDF_Header;
 
 
-typedef struct MDF_Trk{				/* track header structure		*/
-	char id[4];						/* header id					*/
-	unsigned long	len;			/* datas length 				*/
+typedef struct MDF_Trk{             /* track header structure       */
+    unsigned char id[4];            /* header id                    */
+    unsigned char len[4];           /* datas length                 */
 }MDF_Trk;
 
 typedef struct midiFILE{			/* MIDI file descriptor		*/
