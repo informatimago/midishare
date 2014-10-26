@@ -64,7 +64,7 @@
 ;;;   19-11-02   Version MCL 5.0 : MacOSX
 ;;;   26-05-03   Correction de MidiFreeFilter
 ;;;   16-06-03   HKT: Added support for OpenMcl, defpackage, a read-time
-;;;              #+:midishare conditional, and reformatted for standard
+;;;              #+midishare conditional, and reformatted for standard
 ;;;              emacs buffer width of 74 character.
 ;;;   28-10-03   Rename type macro to evtype.
 ;;;   21-11-03   Converted to functional API. (HKT)
@@ -273,7 +273,7 @@
 
 
 #+(and apple mcl powerpc (not ccl-5.0))
-;;; HKT: This was marked #-CCL-4.3.1 but my 4.3 and 4.3.1 need it
+;;; HKT: This was marked #-ccl-4.3.1 but my 4.3 and 4.3.1 need it
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (let ((*warn-if-redefine* nil))
     (require :ff)))
@@ -1875,7 +1875,7 @@
    (ff-call *midiShare* :word port :long slotRefNum :d0 #x4E :word)))
 
 
-) ; END #-:CCL-5.0
+) ; END #-CCL-5.0
 
 
 ;;;-----------------------------------------------------------------------
