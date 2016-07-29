@@ -84,3 +84,12 @@ We may also compile and install the unix library: ::
    make install
 
 This installs the midishare library in ``/usr/local``.
+
+
+
+Original
+----------------------------------------
+
+Note: the original repository is:
+git://git.code.sf.net/p/midishare/code
+this is what we have in the master branch.
