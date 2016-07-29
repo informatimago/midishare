@@ -534,7 +534,7 @@
 				OTHER_LDFLAGS = "-flat_namespace";
 				PRODUCT_NAME = MidiShare;
 				PUBLIC_HEADERS_FOLDER_PATH = "$(value)";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
 					"-Wmost",
@@ -581,7 +581,7 @@
 				OTHER_LDFLAGS = "-flat_namespace";
 				PRODUCT_NAME = MidiShare;
 				PUBLIC_HEADERS_FOLDER_PATH = "$(value)";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
 					"-Wmost",
@@ -626,7 +626,7 @@
 				OTHER_LDFLAGS = "-flat_namespace";
 				PRODUCT_NAME = MidiShare;
 				PUBLIC_HEADERS_FOLDER_PATH = "$(value)";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
 					"-Wmost",
@@ -640,21 +640,24 @@
 		4BB41D0609ED34E100EE9367 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
 			};
 			name = Development;
 		};
 		4BB41D0709ED34E100EE9367 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
 			};
 			name = Deployment;
 		};
 		4BB41D0809ED34E100EE9367 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
 			};
 			name = Default;
 		};
